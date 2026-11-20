@@ -16,7 +16,7 @@ const invalidFloors = new Set<number>();
 let revision = 0;
 let lifecycle: AbortSignal | undefined;
 let initializing: Promise<void> | undefined;
-let currentRefresh: { promise: Promise<void>; settled: boolean } | undefined;
+let currentRefresh: { promise: Promise<void>; settled: boolean; event?: string } | undefined;
 
 function chatId(value: SifangSave): string { return JSON.stringify(['sifang', value.id, value.volume]); }
 function sameSave(a: SifangSave, b: SifangSave): boolean { return a.id === b.id && a.volume === b.volume; }
@@ -48,22 +48,23 @@ function emit(messageId?: number, event?: string): void {
   }
 }
 
-function refresh(event: string, messageId?: number): Promise<void> {
-  const pending = { promise: readFloors(event, messageId), settled: false };
+function refresh(event?: string, messageId?: number): Promise<void> {
+  const pending = { promise: readFloors(event, messageId), settled: false, event };
   currentRefresh = pending;
   void pending.promise.then(() => { pending.settled = true; }, () => { pending.settled = true; });
   return pending.promise;
 }
 
-async function readFloors(event: string, messageId?: number): Promise<void> {
+async function readFloors(event?: string, messageId?: number): Promise<void> {
   const host = requireSifangHost();
   const ticket = ++revision;
   const seenActivity = activity;
   const before = await host.game.save();
   if (lifecycle?.aborted || ticket !== revision) return;
   if (!before?.id) {
+    const hadSave = save !== null;
     valid = false; floors = []; save = null; identity = null;
-    emit(undefined, 'CHAT_CHANGED');
+    if (hadSave || event) emit(undefined, 'CHAT_CHANGED');
     return;
   }
   if (save && !sameSave(save, before)) {
@@ -91,7 +92,8 @@ async function readFloors(event: string, messageId?: number): Promise<void> {
   valid = true;
   streaming = activity !== seenActivity || next.some(floor => floor.busy);
   invalidNodes.clear(); invalidFloors.clear();
-  emit(messageId, switched ? 'CHAT_CHANGED' : event);
+  if (switched) emit(messageId, 'CHAT_CHANGED');
+  else if (event) emit(messageId, event);
 }
 
 /** Subscribe before the first read, so changes during initialization invalidate its snapshot. */
@@ -203,7 +205,10 @@ export async function isSifangChatReady(): Promise<boolean> {
 }
 
 export async function captureSifangAssistant(): Promise<ChatSnapshot> {
-  await refresh('MESSAGE_UPDATED');
+  // Reading a snapshot must not invalidate views that read in response to chat events.
+  // Wait for an incoming host event to publish its update before using the refreshed cache.
+  if (!currentRefresh?.event || currentRefresh.settled) await refresh();
+  await awaitSifangChatRefresh();
   const host = requireSifangHost();
   const latest = await host.game.floor();
   if (latest) checkFloor(latest);

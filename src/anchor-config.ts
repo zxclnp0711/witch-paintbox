@@ -43,6 +43,7 @@ function selectableTags(prompt: string): string[] {
 }
 
 export type AnchorTab = 'round' | 'anchors' | 'shared-outfits';
+const roundReadTimeout = 45_000;
 
 export class AnchorConfig {
   private container: HTMLElement | null = null;
@@ -148,8 +149,14 @@ export class AnchorConfig {
 
   private async refreshRound(): Promise<void> {
     const request = ++this.roundRequest;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
-      const result = await getCurrentRoundImages();
+      const result = await Promise.race([
+        getCurrentRoundImages(),
+        new Promise<never>((_, reject) => {
+          timeout = setTimeout(() => reject(new Error('读取本轮图片超时，请点击刷新重试。')), roundReadTimeout);
+        }),
+      ]);
       if (!this.container || request !== this.roundRequest) return;
       this.round = result.images;
       this.roundNotice = result.images.length ? '' : '本轮还没有已保存的图片。先点击最新 AI 回复中的“生成图片”，再来挑选角色。';
@@ -159,6 +166,8 @@ export class AnchorConfig {
       this.round = [];
       this.roundNotice = error instanceof Error ? error.message : '无法读取本轮图片，请重试。';
       this.roundError = true;
+    } finally {
+      clearTimeout(timeout);
     }
     if (this.tab === 'round') this.render();
   }
