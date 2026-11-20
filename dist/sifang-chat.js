@@ -44,7 +44,7 @@ function emit(messageId, event) {
     }
 }
 function refresh(event, messageId) {
-    const pending = { promise: readFloors(event, messageId), settled: false };
+    const pending = { promise: readFloors(event, messageId), settled: false, event };
     currentRefresh = pending;
     void pending.promise.then(() => { pending.settled = true; }, () => { pending.settled = true; });
     return pending.promise;
@@ -57,11 +57,13 @@ async function readFloors(event, messageId) {
     if (lifecycle?.aborted || ticket !== revision)
         return;
     if (!before?.id) {
+        const hadSave = save !== null;
         valid = false;
         floors = [];
         save = null;
         identity = null;
-        emit(undefined, 'CHAT_CHANGED');
+        if (hadSave || event)
+            emit(undefined, 'CHAT_CHANGED');
         return;
     }
     if (save && !sameSave(save, before)) {
@@ -91,7 +93,10 @@ async function readFloors(event, messageId) {
     streaming = activity !== seenActivity || next.some(floor => floor.busy);
     invalidNodes.clear();
     invalidFloors.clear();
-    emit(messageId, switched ? 'CHAT_CHANGED' : event);
+    if (switched)
+        emit(messageId, 'CHAT_CHANGED');
+    else if (event)
+        emit(messageId, event);
 }
 /** Subscribe before the first read, so changes during initialization invalidate its snapshot. */
 export async function initializeSifangChat(signal) {
@@ -229,7 +234,11 @@ export async function isSifangChatReady() {
     }
 }
 export async function captureSifangAssistant() {
-    await refresh('MESSAGE_UPDATED');
+    // Reading a snapshot must not invalidate views that read in response to chat events.
+    // Wait for an incoming host event to publish its update before using the refreshed cache.
+    if (!currentRefresh?.event || currentRefresh.settled)
+        await refresh();
+    await awaitSifangChatRefresh();
     const host = requireSifangHost();
     const latest = await host.game.floor();
     if (latest)
