@@ -1,0 +1,45 @@
+{
+  "format": "witch-paintbox-config",
+  "version": 2,
+  "kind": "anchors",
+  "exportedAt": "2026-11-22T00:00:00.000Z",
+  "includesKeys": false,
+  "data": {
+    "anchors": [
+      {
+        "id": "anchor-goblin-slayer",
+        "name": "哥布林杀手",
+        "aliases": [],
+        "appearance": "goblin_slayer, Goblin Slayer from Goblin Slayer!, adult human male warrior, broad shoulders, solid muscular build, face fully hidden by a blue-grey angular steel helmet, narrow black eye slit, no visible hair, no visible facial features",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-goblin-slayer-standard",
+            "name": "标准装备",
+            "tags": "layered blue-grey steel armor, angular shoulder plates, segmented chest armor, thick pale fur collar, black padded clothing, brown leather belts, worn leather equipment, dark metal gauntlets"
+          }
+        ],
+        "selectedOutfitId": "outfit-goblin-slayer-standard",
+        "portrait": null,
+        "updatedAt": 0
+      },
+      {
+        "id": "anchor-guild-girl",
+        "name": "柜台小姐",
+        "aliases": ["公会接待员"],
+        "appearance": "guild_girl_(goblin_slayer!), Guild Girl from Goblin Slayer!, adult human woman, slender balanced figure, long golden-blonde hair falling below the shoulders, soft side-swept bangs, clear blue-green eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-guild-girl-uniform",
+            "name": "公会柜台制服",
+            "tags": "clean white high-collar blouse, dark navy sleeveless vest with simple gold trim, vivid red ribbon at the neck, dark navy high-waisted long skirt, neat formal medieval-fantasy guild uniform"
+          }
+        ],
+        "selectedOutfitId": "outfit-guild-girl-uniform",
+        "portrait": null,
+        "updatedAt": 0
+      }
+    ]
+  }
+}

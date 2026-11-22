@@ -44,7 +44,7 @@
         "id": "anchor-guild-girl",
         "name": "柜台小姐",
         "aliases": ["公会接待员"],
-        "appearance": "adult human woman, slender balanced figure, long golden-blonde hair falling below the shoulders, soft side-swept bangs, clear blue-green eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
+        "appearance": "guild_girl_(goblin_slayer!), Guild Girl from Goblin Slayer!, adult human woman, slender balanced figure, long golden-blonde hair falling below the shoulders, soft side-swept bangs, clear blue-green eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
         "negative": "",
         "outfits": [
           {
@@ -61,7 +61,7 @@
         "id": "anchor-goblin-slayer",
         "name": "哥布林杀手",
         "aliases": [],
-        "appearance": "adult human male warrior, broad shoulders, solid muscular build, face fully hidden by a blue-grey angular steel helmet, narrow black eye slit, no visible hair, no visible facial features",
+        "appearance": "goblin_slayer, Goblin Slayer from Goblin Slayer!, adult human male warrior, broad shoulders, solid muscular build, face fully hidden by a blue-grey angular steel helmet, narrow black eye slit, no visible hair, no visible facial features",
         "negative": "",
         "outfits": [
           {
