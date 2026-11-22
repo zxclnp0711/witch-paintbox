@@ -73,6 +73,23 @@
         "selectedOutfitId": "outfit-goblin-slayer-standard",
         "portrait": null,
         "updatedAt": 0
+      },
+      {
+        "id": "anchor-lucrecia",
+        "name": "卢克蕾西娅",
+        "aliases": ["学徒"],
+        "appearance": "adult human woman, long dark hair, pale skin, mature composed facial features, dark red lips, pronounced hourglass figure, very full bust, broad hips, thick thighs",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-lucrecia-dark-purple-velvet",
+            "name": "暗紫天鹅绒礼服",
+            "tags": "long dark-purple velvet dress, high collar, black underbust corset, black lace gloves"
+          }
+        ],
+        "selectedOutfitId": "outfit-lucrecia-dark-purple-velvet",
+        "portrait": null,
+        "updatedAt": 0
       }
     ]
   }
