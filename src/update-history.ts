@@ -1,6 +1,14 @@
 // Release dates use Asia/Shanghai. Historical entries follow the local repository log.
 const updates = [
   {
+    date: '2026-11-22', title: '角色锚定单独迁移与提示词整理',
+    changes: [
+      '配置迁移新增“角色锚定”独立范围，可只导入或导出角色外貌、别名、专属服装、默认服装、角色负面词与角色图，不影响其他配置。',
+      '导入前预览角色数量、别名、服装和角色图；支持跳过或覆盖同名角色，覆盖时保留本地 ID 与未替换的角色图。',
+      '角色库在预览确认期间发生变化时会刷新预览并要求再次确认；未保存角色、服装草稿时阻止配置迁移，避免静默丢弃。',
+    ],
+  },
+  {
     date: '2026-11-21', title: 'NAI 新增 V5 Full 性能版',
     changes: [
       'NAI 模型列表新增“NAI Diffusion V5 Full · 性能版（Medium Effort）”，同等质量约省 42% 点数。',

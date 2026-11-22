@@ -27,6 +27,7 @@ export const importSectionTitles: Record<ImportSection, string> = {
   anchors: '标签锚定', sharedOutfits: '通用服装', worldbooks: '世界书', preferences: '生图设置与使用偏好',
 };
 const PROFILE_LIMIT = 200;
+const ANCHOR_LIMIT = 10_000;
 const PARAMETER_FIELDS = ['parameters', 'openaiParameters', 'geminiParameters', 'grokParameters'] as const;
 
 export function importSections(archive: ParsedArchive): ImportSection[] {
@@ -40,6 +41,12 @@ export function defaultImportModes(archive: ParsedArchive): ImportModes {
 
 /** Only the stores the archive kind can touch are read, so partial imports never wait on the anchor or book libraries. */
 export async function loadLocalConfig(archive: ParsedArchive, context: TavernContext): Promise<LocalConfig> {
+  if (archive.kind === 'anchors') {
+    return {
+      image: {} as AllImageSettings, model: {} as AllModelSettings, preferences: {} as Settings,
+      anchors: await loadAnchors(), sharedOutfits: [], worldbooks: [],
+    };
+  }
   const [anchors, worldbooks] = await Promise.all([
     archive.kind === 'all' ? loadAnchors() : Promise.resolve([]),
     archive.kind === 'all' || archive.kind === 'worldbooks' ? loadWorldbookArchive() : Promise.resolve([]),
@@ -158,8 +165,10 @@ function mergeAnchors(config: LocalConfig, incoming: CharacterAnchor[], mode: Im
       tally.replaced++;
     } else blocked++;
   }
+  if (items.length > ANCHOR_LIMIT) throw new Error(`角色锚定合并后超过 ${ANCHOR_LIMIT} 个角色，请先清理本地角色库。`);
   config.anchors = items;
-  return `${tallyText(tally, mode)}${blocked ? `；${blocked} 个与本地其他角色的名称或别名冲突，已跳过` : ''}`;
+  const summary = tally.added || tally.replaced || tally.skipped ? tallyText(tally, mode) : '没有可导入角色';
+  return `${summary}${blocked ? `；${blocked} 个与本地其他角色的名称或别名冲突，已跳过` : ''}`;
 }
 
 /** A keyless file never replaces a local endpoint: pairing a local key with a shared URL would send it elsewhere. */
@@ -209,9 +218,14 @@ function joined(parts: (string | null)[], empty: string): string {
 
 /** Pure merge over a snapshot, so the review can preview each choice before anything is written. */
 export function mergeArchive(archive: ParsedArchive, local: LocalConfig, modes: ImportModes): { config: LocalConfig; stores: Store[]; details: Map<ImportSection, string> } {
-  const config: LocalConfig = { ...local, image: structuredClone(local.image), model: structuredClone(local.model), preferences: structuredClone(local.preferences) };
   const details = new Map<ImportSection, string>(), defaults = defaultImportModes(archive);
   const mode = (section: ImportSection): ImportMode => modes[section] ?? defaults[section] ?? 'skip';
+  if (archive.kind === 'anchors') {
+    const config: LocalConfig = { ...local, anchors: [...local.anchors] };
+    details.set('anchors', mergeAnchors(config, archive.data.anchors, mode('anchors')));
+    return { config, stores: ['anchors'], details };
+  }
+  const config: LocalConfig = { ...local, image: structuredClone(local.image), model: structuredClone(local.model), preferences: structuredClone(local.preferences) };
   if (archive.kind === 'artists') {
     const { provider, artists } = archive.data;
     details.set('artists', mergeArtists(config.image.profiles[provider], artists, mode('artists')) ?? '文件中没有画师串');
@@ -249,8 +263,8 @@ export function mergeArchive(archive: ParsedArchive, local: LocalConfig, modes: 
 }
 
 /** Merge against freshly read local data; restore completed stores if a later storage operation fails. */
-export async function applyArchive(archive: ParsedArchive, context: TavernContext, modes: ImportModes): Promise<void> {
-  const local = await loadLocalConfig(archive, context);
+export async function applyArchive(archive: ParsedArchive, context: TavernContext, modes: ImportModes, localSnapshot?: LocalConfig): Promise<void> {
+  const local = localSnapshot ?? await loadLocalConfig(archive, context);
   const { config, stores } = mergeArchive(archive, local, modes);
   const writers: Record<Store, (value: LocalConfig) => void | Promise<void>> = {
     anchors: value => replaceAnchors(value.anchors),

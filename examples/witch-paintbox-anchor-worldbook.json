@@ -1,0 +1,17 @@
+{
+  "name": "魔女之匣·角色锚定编译规则",
+  "entries": [
+    {
+      "uid": "character-anchor-compiler-v1",
+      "comment": "角色锚定编译规则",
+      "content": "魔女之匣角色锚定规则：当正文出现已登记角色时，只使用角色正式中文名的 @引用，例如 @护理长 或 @护理长:地母神殿护理袍。不要把角色目录中的 base、default 或服装 tag 复制进正文，也不要写 CHARACTER IDENTITY ANCHOR、same character、preserve、must keep、do not 等元话语；固定外貌与服装由生图前展开器处理。正文只描述本镜头可见的动作、表情、姿态、位置、构图、人物关系、环境、光线和媒介。每个角色必须拥有独立的主体短语，不能把一个角色的发型、服装或动作接到另一个角色身上。若是 KREA 2 或其他自然语言图像模型，输出一个连贯的英文图像描述段落，不使用 BREAK、|、~、INI 标题或 Negative Prompt 段落；已登记角色保持 @引用，等待魔女之匣在生图前展开。若角色只是背景人物，只写当前镜头实际可见的固定特征，不强行展示被遮挡的耳饰、手部疤痕或腰间道具。",
+      "enabled": true,
+      "constant": true,
+      "keys": [],
+      "secondaryKeys": [],
+      "selective": false,
+      "caseSensitive": false,
+      "matchWholeWords": false
+    }
+  ]
+}

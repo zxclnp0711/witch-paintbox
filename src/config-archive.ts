@@ -8,7 +8,7 @@ import { openAIImageComplexityLabel, supportsOpenAIImageComplexity } from './ope
 import { isPageId } from './pages.js';
 
 export const MAX_ARCHIVE_BYTES = 128 * 1024 * 1024;
-export type ArchiveKind = 'all' | 'artists' | 'presets' | 'worldbooks';
+export type ArchiveKind = 'all' | 'artists' | 'presets' | 'anchors' | 'worldbooks';
 type ArtistSettings = Pick<ImageSettings, 'artists' | 'positive' | 'negative' | 'activeArtistId'>;
 type PresetSettings = Pick<ModelSettings, 'presetName' | 'head' | 'tail' | 'promptOrder' | 'enabledLayers' | 'parseImageMarkers' | 'hideImageContext'>;
 type WorldbookAttachments = Record<ImageProvider, ModelSettings['worldbooks']>;
@@ -33,6 +33,7 @@ export type ParsedArchive = Envelope & (
   { kind: 'all'; data: CompleteSettings }
   | { kind: 'artists'; data: { provider: ImageProvider; artists: ArtistSettings } }
   | { kind: 'presets'; data: { provider: ImageProvider; presets: PresetSettings } }
+  | { kind: 'anchors'; data: { anchors: CharacterAnchor[] } }
   | { kind: 'worldbooks'; data: WorldbookSettings }
 );
 export interface ArchiveSummary { title: string; detail: string }
@@ -231,7 +232,7 @@ export function parseArchive(source: string): ParsedArchive {
   fields(raw, ['format', 'version', 'kind', 'exportedAt', 'includesKeys', 'data'], '配置文件');
   if (raw.format !== 'witch-paintbox-config') throw new Error('请选择魔女画匣导出的配置文件；原始模型预设和世界书 JSON 请在各自页面导入。');
   if (raw.version !== 1 && raw.version !== 2) throw new Error('不支持这个配置文件版本，请更新插件后重试。');
-  if (!['all', 'artists', 'presets', 'worldbooks'].includes(String(raw.kind)) || typeof raw.includesKeys !== 'boolean'
+  if (!['all', 'artists', 'presets', 'anchors', 'worldbooks'].includes(String(raw.kind)) || typeof raw.includesKeys !== 'boolean'
     || typeof raw.exportedAt !== 'string' || raw.exportedAt.length > 64 || !Number.isFinite(Date.parse(raw.exportedAt))) {
     throw new Error('配置文件的类型、时间或密钥标记无效。');
   }
@@ -248,6 +249,10 @@ export function parseArchive(source: string): ParsedArchive {
     fields(data, raw.version === 1 ? ['presets'] : ['provider', 'presets'], '预设分享文件');
     const provider = raw.version === 1 ? 'novelai' : imageProvider(data.provider);
     result = { ...base, kind: 'presets', data: { provider, presets: presetSettings(data.presets, provider) } };
+  } else if (raw.kind === 'anchors') {
+    if (raw.version !== 2) throw new Error('独立角色锚定配置需使用版本 2。');
+    fields(data, ['anchors'], '角色锚定配置');
+    result = { ...base, kind: 'anchors', data: { anchors: anchors(data.anchors) } };
   } else if (raw.kind === 'worldbooks') {
     result = { ...base, kind: 'worldbooks', data: worldbookSettings(data, raw.version) };
   } else {
@@ -298,6 +303,11 @@ export async function exportArchive(kind: ArchiveKind, includeKeys: boolean, con
     const worldbooks = await loadWorldbookArchive();
     checkWorldbookLinks(attachments, worldbooks);
     data = { worldbooks, attachments };
+  } else if (kind === 'anchors') {
+    const characters = await loadAnchors();
+    const portable: PortableAnchor[] = [];
+    for (const character of characters) portable.push({ ...character, portrait: await encodePortrait(character.portrait) });
+    data = { anchors: portable };
   } else {
     const image = loadAllImageSettings(), model = loadAllModelSettings();
     const [characters, worldbooks] = await Promise.all([loadAnchors(), loadWorldbookArchive()]);
@@ -336,6 +346,10 @@ export function summarizeArchive(archive: ParsedArchive): ArchiveSummary[] {
   if (archive.kind === 'presets') {
     const preset = archive.data.presets;
     rows.push({ title: `${providerName(archive.data.provider)} 预设`, detail: `“${preset.presetName || '未命名'}”，${preset.head.length + preset.tail.length} 个文本条目，含条目编排、功能层启用状态；配图标记开关为各通道共用设置。` });
+    return rows;
+  }
+  if (archive.kind === 'anchors') {
+    rows.push({ title: '标签锚定', detail: `${archive.data.anchors.length} 个角色、${archive.data.anchors.reduce((total, anchor) => total + anchor.aliases.length, 0)} 个别名、${archive.data.anchors.reduce((total, anchor) => total + anchor.outfits.length, 0)} 套服装、${archive.data.anchors.filter(anchor => anchor.portrait).length} 张角色图。该范围只处理角色锚定。` });
     return rows;
   }
   if (archive.kind === 'worldbooks') {

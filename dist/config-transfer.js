@@ -4,11 +4,19 @@ import { imageProviderName, loadImageSettings } from './image-settings.js';
 function escape(value) {
     return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 }
-const scopeTitles = { all: '全部配置', artists: '画师串', presets: '预设', worldbooks: '世界书' };
+function anchorSnapshotKey(local) {
+    return JSON.stringify(local.anchors.map(anchor => ({
+        id: anchor.id, name: anchor.name, aliases: anchor.aliases, appearance: anchor.appearance,
+        negative: anchor.negative, outfits: anchor.outfits, selectedOutfitId: anchor.selectedOutfitId,
+        portrait: anchor.portrait ? [anchor.portrait.type, anchor.portrait.size] : null, updatedAt: anchor.updatedAt,
+    })));
+}
+const scopeTitles = { all: '全部配置', artists: '画师串', presets: '预设', anchors: '角色锚定', worldbooks: '世界书' };
 const scopeDescriptions = {
     all: '包含 NAI / GPT / Gemini / Grok 各通道生图 API、参数、画师串和预设，以及共用模型 API、标签锚定（含角色图）、通用服装、世界书、生图设置与使用偏好。',
     artists: '分享当前生图类型的命名画师配置、提示词及选用状态，文件会记录目标类型。',
     presets: '分享当前生图类型的预设名称、文本条目、编排顺序、功能层启用状态及共用标记开关。',
+    anchors: '分享标签锚定角色、别名、固定外貌、专属服装与角色图，不包含 API、预设或世界书。',
     worldbooks: '包含完整世界书库、原文条目，以及 NAI / GPT 两套已保存的挂载选择。',
 };
 const modeLabels = { skip: '跳过', overwrite: '覆盖' };
@@ -243,7 +251,18 @@ export class ConfigTransfer {
         this.error = false;
         this.render();
         try {
-            await applyArchive(archive, this.context, modes);
+            let localSnapshot;
+            if (archive.kind === 'anchors') {
+                const latest = await loadLocalConfig(archive, this.context);
+                if (anchorSnapshotKey(latest) !== anchorSnapshotKey(this.pending.local)) {
+                    this.pending = { ...this.pending, local: latest };
+                    this.notice = '角色库在预览后发生变化，已刷新导入预览；请核对后再次确认。';
+                    this.error = false;
+                    return;
+                }
+                localSnapshot = latest;
+            }
+            await applyArchive(archive, this.context, modes, localSnapshot);
             this.onApplied(archive.kind, archive.kind === 'artists' || archive.kind === 'presets' ? archive.data.provider : undefined);
             this.pending = null;
             this.notice = archive.kind === 'all' ? '配置已导入，当前页面即可继续使用；生图设置与使用偏好已提交酒馆保存。' : `${scopeTitles[archive.kind]}已导入，当前页面即可继续使用。`;

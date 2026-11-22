@@ -87,7 +87,8 @@ async function mount() {
             // applyArchive emits before this callback reloads the live preferences.
             window.dispatchEvent(new Event('witch-paintbox:preferences-changed'));
         }
-    }, () => imageConfig.hasPendingWrites || modelConfig.hasPendingWrites || anchorConfig.hasPendingWrites || changingSyncKeys ? '配置仍在保存或角色图仍在生成，请完成后再导入或导出。' : undefined);
+    }, () => imageConfig.hasPendingWrites || modelConfig.hasPendingWrites || anchorConfig.hasPendingWrites || changingSyncKeys
+        ? '配置仍在保存、角色或服装草稿尚未保存，或角色图仍在生成；请先完成或放弃草稿，再导入或导出。' : undefined);
     const controller = new AbortController();
     const { signal } = controller;
     let nativeReady = false;

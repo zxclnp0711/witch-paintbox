@@ -82,7 +82,7 @@ export class AnchorConfig {
     portraitNotice = '';
     portraitError = false;
     portraitPet = null;
-    get hasPendingWrites() { return this.busy || this.portraitRequest !== null; }
+    get hasPendingWrites() { return this.busy || this.portraitRequest !== null || this.dirty || this.sharedDirty; }
     mount(container, initialTab) {
         this.unmount();
         if (initialTab)
@@ -94,7 +94,7 @@ export class AnchorConfig {
         container.addEventListener('input', event => this.edit(event), { signal });
         container.addEventListener('change', event => this.change(event), { signal });
         this.unsubscribe = [
-            onAnchorsChanged(() => { void this.refreshAnchors(); }),
+            onAnchorsChanged(() => { void this.refreshChangedAnchors(); }),
             onSharedOutfitsChanged(() => this.refreshSharedOutfits()),
             onImageHistoryChanged(() => this.scheduleRound()),
             watchChatRendering(() => this.scheduleRound()),
@@ -180,6 +180,15 @@ export class AnchorConfig {
             this.anchorsError = error instanceof Error ? error.message : '无法读取角色，请重试。';
         }
         if (this.tab === 'anchors' && !this.draft && !this.busy)
+            this.render();
+    }
+    async refreshChangedAnchors() {
+        const draftId = this.draft?.id;
+        await this.refreshAnchors();
+        if (!draftId || !this.container || this.dirty || this.busy)
+            return;
+        this.draft = this.anchors.find(anchor => anchor.id === draftId) ?? null;
+        if (this.tab === 'anchors')
             this.render();
     }
     refreshSharedOutfits() {

@@ -1,0 +1,79 @@
+{
+  "format": "witch-paintbox-config",
+  "version": 2,
+  "kind": "anchors",
+  "exportedAt": "2026-11-22T00:00:00.000Z",
+  "includesKeys": false,
+  "data": {
+    "anchors": [
+      {
+        "id": "anchor-vira-nurse",
+        "name": "薇拉",
+        "aliases": ["护理长"],
+        "appearance": "adult human woman, moderately tall sturdy build, broad shoulders, strong practical arms, pale skin, short light-brown hair tied in a loose bun at the back, a few soft strands behind the ears, simple wooden hairpin, pale green eyes, slightly flat nose, soft full lips, gentle tired expression",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-vira-earth-mother-robe",
+            "name": "地母神殿护理袍",
+            "tags": "washed-out ivory linen Earth Mother priestess robe, rolled-up sleeves, worn soft fabric, natural washing creases, robe hem tucked into a belt, copper key ring, hemostatic forceps, small leather medicine pouch, small plain silver ear clip on the left ear"
+          }
+        ],
+        "selectedOutfitId": "outfit-vira-earth-mother-robe",
+        "portrait": null,
+        "updatedAt": 0
+      },
+      {
+        "id": "anchor-sally",
+        "name": "莎莉",
+        "aliases": [],
+        "appearance": "adult woman, very long soft grey hair falling far below the waist, pale porcelain skin, pale icy-blue eyes with a distant unfocused gaze, restrained slight smile, moderately full bust",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-sally-white-off-shoulder",
+            "name": "白色露肩裙",
+            "tags": "simple white off-the-shoulder dress, clean neckline, soft flowing fabric"
+          }
+        ],
+        "selectedOutfitId": "outfit-sally-white-off-shoulder",
+        "portrait": null,
+        "updatedAt": 0
+      },
+      {
+        "id": "anchor-guild-girl",
+        "name": "柜台小姐",
+        "aliases": ["公会接待员"],
+        "appearance": "adult human woman, slender balanced figure, long golden-blonde hair falling below the shoulders, soft side-swept bangs, clear blue-green eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-guild-girl-uniform",
+            "name": "公会柜台制服",
+            "tags": "clean white high-collar blouse, dark navy sleeveless vest with simple gold trim, vivid red ribbon at the neck, dark navy high-waisted long skirt, neat formal medieval-fantasy guild uniform"
+          }
+        ],
+        "selectedOutfitId": "outfit-guild-girl-uniform",
+        "portrait": null,
+        "updatedAt": 0
+      },
+      {
+        "id": "anchor-goblin-slayer",
+        "name": "哥布林杀手",
+        "aliases": [],
+        "appearance": "adult human male warrior, broad shoulders, solid muscular build, face fully hidden by a blue-grey angular steel helmet, narrow black eye slit, no visible hair, no visible facial features",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-goblin-slayer-standard",
+            "name": "标准装备",
+            "tags": "layered blue-grey steel armor, angular shoulder plates, segmented chest armor, thick pale fur collar, black padded clothing, brown leather belts, worn leather equipment, dark metal gauntlets"
+          }
+        ],
+        "selectedOutfitId": "outfit-goblin-slayer-standard",
+        "portrait": null,
+        "updatedAt": 0
+      }
+    ]
+  }
+}
