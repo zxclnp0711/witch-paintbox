@@ -1,11 +1,11 @@
 import { loadAnchors } from './anchor-store.js';
-import { formatAnchorCatalog } from './anchor-catalog.js';
+import { formatAnchorContext } from './anchor-catalog.js';
 import { loadSharedOutfits } from './shared-outfit-store.js';
 import { registerFeatureLayer } from './feature-layers.js';
 import { readWorldbook } from './worldbook-source.js';
 import { isWorldbookEntryActive } from './worldbook-activation.js';
 
-/** Only existing user-authored content is sent; neither provider adds instructions. */
+/** Provider-specific anchor guidance is added only when the corresponding library has content. */
 export function registerBuiltinLayers(): () => void {
   const unregister = [
     registerFeatureLayer({
@@ -33,7 +33,7 @@ export function registerBuiltinLayers(): () => void {
         const sharedOutfits = loadSharedOutfits();
         const anchors = await loadAnchors();
         context.signal?.throwIfAborted();
-        const content = formatAnchorCatalog(anchors, sharedOutfits);
+        const content = formatAnchorContext(anchors, sharedOutfits, context.settings?.presetProvider ?? 'novelai');
         return content ? [{ role: 'system', content }] : [];
       },
     }),

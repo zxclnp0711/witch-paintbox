@@ -1,7 +1,7 @@
 {
   "display_name": "魔女画匣",
   "author": "Elainadesne",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "js": "dist/index.js",
   "loading_order": 100,
   "requires": [],

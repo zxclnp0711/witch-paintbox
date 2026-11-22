@@ -10,13 +10,13 @@
         "id": "anchor-goblin-slayer",
         "name": "哥布林杀手",
         "aliases": [],
-        "appearance": "goblin_slayer, Goblin Slayer from Goblin Slayer!, adult human male warrior, broad shoulders, solid muscular build, face fully hidden by a blue-grey angular steel helmet, narrow black eye slit, no visible hair, no visible facial features",
+        "appearance": "goblin_slayer, goblin slayer, Goblin Slayer (Goblin Slayer!), adult human male goblin hunter, sturdy compact muscular build, broad shoulders, grimy practical armor, entire head and ears fully enclosed by a weathered blue-grey steel helmet, low rounded segmented dome, flat brow ridge, layered cheek guards, three narrow vertical black visor slits, a pale ivory circular metal plate on the right temple, no exposed ears, hair, skin or facial features",
         "negative": "",
         "outfits": [
           {
             "id": "outfit-goblin-slayer-standard",
             "name": "标准装备",
-            "tags": "layered blue-grey steel armor, angular shoulder plates, segmented chest armor, thick pale fur collar, black padded clothing, brown leather belts, worn leather equipment, dark metal gauntlets"
+            "tags": "weathered blue-grey plate armor over black quilted padding and chainmail, broad layered angular shoulder pauldrons, overlapping sculpted chest plates, thick shaggy light beige fur collar around the neck, brown leather harness and utility belts, multiple leather pouches, dark steel vambraces and gauntlets, chainmail skirt, dark charcoal trousers, armored greaves, long torn deep-crimson cloth scarf attached to the rear of the helmet, small round dark steel targe shield"
           }
         ],
         "selectedOutfitId": "outfit-goblin-slayer-standard",
@@ -27,13 +27,13 @@
         "id": "anchor-guild-girl",
         "name": "柜台小姐",
         "aliases": ["公会接待员"],
-        "appearance": "guild_girl_(goblin_slayer!), Guild Girl from Goblin Slayer!, adult human woman, slender balanced figure, long golden-blonde hair falling below the shoulders, soft side-swept bangs, clear blue-green eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
+        "appearance": "guild_girl_(goblin_slayer!), Guild Girl from Goblin Slayer!, adult human woman, petite balanced figure about 155 cm tall with gentle curves, fair skin, light brown hair woven into neat braids, warm yellow-gold eyes, delicate eyebrows, refined gentle facial features, warm professional smile",
         "negative": "",
         "outfits": [
           {
             "id": "outfit-guild-girl-uniform",
             "name": "公会柜台制服",
-            "tags": "clean white high-collar blouse, dark navy sleeveless vest with simple gold trim, vivid red ribbon at the neck, dark navy high-waisted long skirt, neat formal medieval-fantasy guild uniform"
+            "tags": "crisp white dress shirt, dark navy vest, bright yellow jabot at the throat, long black pencil skirt, black three-strap belt, neat medieval-fantasy Adventurer's Guild receptionist uniform"
           }
         ],
         "selectedOutfitId": "outfit-guild-girl-uniform",

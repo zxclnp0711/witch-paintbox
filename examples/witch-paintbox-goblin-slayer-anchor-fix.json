@@ -1,0 +1,28 @@
+{
+  "format": "witch-paintbox-config",
+  "version": 2,
+  "kind": "anchors",
+  "exportedAt": "2026-11-22T00:00:00.000Z",
+  "includesKeys": false,
+  "data": {
+    "anchors": [
+      {
+        "id": "anchor-goblin-slayer",
+        "name": "哥布林杀手",
+        "aliases": [],
+        "appearance": "goblin_slayer, goblin slayer, Goblin Slayer (Goblin Slayer!), adult human male goblin hunter, sturdy compact muscular build, broad shoulders, grimy practical armor, entire head and ears fully enclosed by a weathered blue-grey steel helmet, low rounded segmented dome, flat brow ridge, layered cheek guards, three narrow vertical black visor slits, a pale ivory circular metal plate on the right temple, no exposed ears, hair, skin or facial features",
+        "negative": "",
+        "outfits": [
+          {
+            "id": "outfit-goblin-slayer-standard",
+            "name": "标准装备",
+            "tags": "weathered blue-grey plate armor over black quilted padding and chainmail, broad layered angular shoulder pauldrons, overlapping sculpted chest plates, thick shaggy light beige fur collar around the neck, brown leather harness and utility belts, multiple leather pouches, dark steel vambraces and gauntlets, chainmail skirt, dark charcoal trousers, armored greaves, long torn deep-crimson cloth scarf attached to the rear of the helmet, small round dark steel targe shield"
+          }
+        ],
+        "selectedOutfitId": "outfit-goblin-slayer-standard",
+        "portrait": null,
+        "updatedAt": 0
+      }
+    ]
+  }
+}
