@@ -452,7 +452,7 @@ export function watchReplyGeneration(callback: (event: ReplyActivity) => void): 
     return watchSifangChat((messageId, event) => {
       const latest = readSifangFloors().at(-1);
       const fingerprint = JSON.stringify([sifangImageChatContext()?.chatId, latest?.node, latest?.version, latest?.raw]);
-      // Snapshot reads refresh this cache too; unchanged reads are not new floor activity.
+      // Duplicate edit notifications with the same snapshot are not new floor activity.
       if (event === 'MESSAGE_UPDATED' && fingerprint === previous) return;
       previous = fingerprint;
       if (event === 'CHAT_CHANGED' || event === 'MESSAGE_DELETED') callback({ kind: 'reset' });

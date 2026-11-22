@@ -46,6 +46,7 @@ function selectableTags(prompt) {
         tags.push(tail);
     return tags;
 }
+const roundReadTimeout = 45_000;
 export class AnchorConfig {
     container = null;
     listeners = null;
@@ -147,8 +148,14 @@ export class AnchorConfig {
     }
     async refreshRound() {
         const request = ++this.roundRequest;
+        let timeout;
         try {
-            const result = await getCurrentRoundImages();
+            const result = await Promise.race([
+                getCurrentRoundImages(),
+                new Promise((_, reject) => {
+                    timeout = setTimeout(() => reject(new Error('读取本轮图片超时，请点击刷新重试。')), roundReadTimeout);
+                }),
+            ]);
             if (!this.container || request !== this.roundRequest)
                 return;
             this.round = result.images;
@@ -161,6 +168,9 @@ export class AnchorConfig {
             this.round = [];
             this.roundNotice = error instanceof Error ? error.message : '无法读取本轮图片，请重试。';
             this.roundError = true;
+        }
+        finally {
+            clearTimeout(timeout);
         }
         if (this.tab === 'round')
             this.render();
